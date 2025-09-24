@@ -1,42 +1,31 @@
-const app =require("./app");
+const app = require("./app");
 const connectDatabase = require("./db/Database");
 const errorMiddleware = require("./middleware/error");
-
 const path = require("path");
 const express = require("express");
 
+// Serve uploads
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
-
+// Middleware
 app.use(errorMiddleware);
-//Handling uncauhght exception
 
-process.on("uncaughtException", (err)=>{
-    console.log(`Error: ${err.message}`);
-    console.log(`shutting down the server for handling uncaught exception`);
+// Handling uncaught exception
+process.on("uncaughtException", (err) => {
+  console.log(`Error: ${err.message}`);
+  console.log(`Shutting down due to uncaught exception`);
+});
 
-})
-
-//config
-if(process.env.NODE_ENV !== "PRODUCTION"){
-      require("dotenv").config({
-        path:"backend/config/.env"
-    })
+// Config
+if (process.env.NODE_ENV !== "PRODUCTION") {
+  require("dotenv").config({
+    path: "backend/config/.env",
+  });
 }
+
+// Connect DB
 connectDatabase();
 
-
-const server = app.listen(process.env.PORT,()=>{
-    console.log(`Server is running on http://localhost:${process.env.PORT}`)
-})
-
-//unhandled promise rejection
-
-process.on("unhandleRejection", (err) =>{
-    console.log(`Shutting down the server for ${err.message}`)
-    console.log(`shutting down the server for unhandle promise rejection`);
-
-    server.close(()=>{
-        process.exit(1);
-    });
-});
+// ❌ Do NOT call app.listen() on Vercel
+// ✅ Instead, just export app
+module.exports = app;
