@@ -9,6 +9,10 @@ app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Middleware
 app.use(errorMiddleware);
+app.get("/", (req, res) => {
+  res.send("✅ Backend is running on Vercel");
+});
+
 
 // Handling uncaught exception
 process.on("uncaughtException", (err) => {
