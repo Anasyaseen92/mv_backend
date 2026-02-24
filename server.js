@@ -1,5 +1,5 @@
 const app = require("./app");
-const connectDatabase = require("./db/Database");
+//const connectDatabase = require("./db/Database");
 const errorMiddleware = require("./middleware/error");
 const path = require("path");
 const express = require("express");
@@ -27,8 +27,8 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
   });
 }
 
-// Connect DB
-connectDatabase();
+// Connect DB - Commented out for Vercel serverless deployment
+// connectDatabase();
 
 // ❌ Do NOT call app.listen() on Vercel
 // ✅ Instead, just export app
