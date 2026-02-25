@@ -1,5 +1,6 @@
 const app = require("./app");
 //const connectDatabase = require("./db/Database");
+const connectDatabase = require("./db/Database");
 const errorMiddleware = require("./middleware/error");
 const path = require("path");
 const express = require("express");
