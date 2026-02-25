@@ -63,7 +63,7 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
     // Create activation token
     const activationToken = createActivationToken(user);
     console.log("Activation token (copy for Postman):", activationToken);
-    const activationUrl = `http://localhost:5173/activation/${activationToken}`;
+    const activationUrl = `https://mv92.netlify.app/activation/${activationToken}`;
 
     // Send activation email
     try {
