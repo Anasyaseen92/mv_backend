@@ -1,5 +1,4 @@
 const app = require("./app");
-//const connectDatabase = require("./db/Database");
 const connectDatabase = require("./db/Database");
 const errorMiddleware = require("./middleware/error");
 const path = require("path");
@@ -24,13 +23,21 @@ process.on("uncaughtException", (err) => {
 // Config
 if (process.env.NODE_ENV !== "PRODUCTION") {
   require("dotenv").config({
-    path: "backend/config/.env",
+    path: path.join(__dirname, "config/.env"),
   });
 }
 
-// Connect DB - Commented out for Vercel serverless deployment
-// connectDatabase();
+// Connect DB for all routes (ensure DB_URL is set on Vercel)
+connectDatabase();
 
 // ❌ Do NOT call app.listen() on Vercel
 // ✅ Instead, just export app
 module.exports = app;
+
+// Local development server
+if (!process.env.VERCEL) {
+  const PORT = process.env.PORT || 4000;
+  app.listen(PORT, () => {
+    console.log(`HTTP server listening on port ${PORT}`);
+  });
+}
