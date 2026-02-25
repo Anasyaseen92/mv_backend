@@ -63,7 +63,7 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
     // Create activation token
     const activationToken = createActivationToken(user);
     console.log("Activation token (copy for Postman):", activationToken);
-    const activationUrl = `https://mv92.netlify.app/activation/${activationToken}`;
+    const activationUrl = `http://localhost:5173/activation/${activationToken}`;
 
     // Send activation email
     try {
@@ -89,6 +89,9 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
 
 // ========== Create Activation Token ==========
 const createActivationToken = (user) => {
+  if (!process.env.ACTIVATION_SECRET) {
+    throw new Error("ACTIVATION_SECRET is missing in .env");
+  }
   return jwt.sign(user, process.env.ACTIVATION_SECRET, {
     expiresIn: "15m", // 15 minutes for testing
   });
@@ -119,7 +122,7 @@ router.post(
     }
 
     try {
-      const user = await User.create({ name, email, avatar, password, });
+      const user = await User.create({ name, email, avatar, password });
       console.log("User created:", user);
       sendToken(user, 201, res);
       
