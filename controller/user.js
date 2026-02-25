@@ -11,7 +11,7 @@ const sendMail = require("../utils/sendMail");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const sendToken = require("../utils/jwtToken");
 const { isAuthenticated } = require("../middleware/auth");
-const cloudinary = require("../cloudinary")
+const cloudinary = require("../cloudinary");
 
 // ========== Create User Route ==========
 router.post("/create-user", upload.single("file"), async (req, res, next) => {
@@ -233,17 +233,36 @@ router.put(
       const existsUser = await User.findById(req.user.id);
 
       if (req.file) {
-        // delete old avatar file if exists (safe check)
-        if (existsUser.avatar) {
-          const oldPath = path.join(__dirname, "..", "uploads", existsUser.avatar);
-          if (fs.existsSync(oldPath)) {
-            fs.unlinkSync(oldPath);
-          }
+        console.log("File received:", req.file);
+        let avatarUrl = "";
+        
+        // upload to Cloudinary
+        try {
+          avatarUrl = await new Promise((resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream(
+              { folder: "user_avatars" },
+              (error, result) => {
+                if (error) {
+                  console.error("Cloudinary upload error:", error);
+                  reject(error);
+                } else {
+                  console.log("Cloudinary upload successful:", result);
+                  resolve(result.secure_url);
+                }
+              }
+            );
+            stream.end(req.file.buffer);
+          });
+        } catch (cloudError) {
+          console.error("Cloudinary upload failed:", cloudError);
+          return next(new ErrorHandler("Avatar upload failed", 500));
         }
 
-        // save new filename in DB
-        existsUser.avatar = req.file.filename;
+        // save Cloudinary URL in DB
+        console.log("Saving avatar URL to DB:", avatarUrl);
+        existsUser.avatar = avatarUrl;
         await existsUser.save();
+        console.log("User saved with new avatar:", existsUser);
       }
 
       res.status(200).json({
