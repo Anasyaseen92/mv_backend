@@ -12,6 +12,7 @@ const sendShopToken = require("../utils/shopToken");
 const cloudinary = require("../cloudinary");
 
 const router = express.Router();
+const FRONTEND_URL = process.env.FRONTEND_URL || "https://mv92.netlify.app";
 
 // ===== Create Shop - Send Activation Email =====
 router.post("/create-shop", upload.single("file"), async (req, res, next) => {
@@ -57,7 +58,7 @@ router.post("/create-shop", upload.single("file"), async (req, res, next) => {
     const activationToken = createActivationToken(sellerData);
 
     // Activation URL
-    const activationUrl = `http://localhost:5173/seller/activation/${activationToken}`;
+    const activationUrl = `${FRONTEND_URL}/seller/activation/${activationToken}`;
 
     // Send activation email
     await sendMail({
