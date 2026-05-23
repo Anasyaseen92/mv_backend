@@ -20,13 +20,13 @@ module.exports = (err, req, res, next) => {
   // Invalid JWT
   if (err.name === "JsonWebTokenError") {
     const message = "Invalid token. Please log in again.";
-    err = new ErrorHandler(message, 400);
+    err = new ErrorHandler(message, 401);
   }
 
   // Expired JWT
   if (err.name === "TokenExpiredError") {
     const message = "Token has expired. Please log in again.";
-    err = new ErrorHandler(message, 400);
+    err = new ErrorHandler(message, 401);
   }
 
   // Final response

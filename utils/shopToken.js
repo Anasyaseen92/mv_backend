@@ -4,12 +4,10 @@ const sendShopToken = (user, statusCode, res) => {
   // Cookie options
   const options = {
     expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days
-    httpOnly: true,           
-    secure: process.env.NODE_ENV === "production", 
-    sameSite: "lax",         
+    httpOnly: true,
+    sameSite: "None", // required for cross-origin cookies
+    secure: process.env.NODE_ENV === "production",
   };
-
-  
 
   res.status(statusCode)
     .cookie("seller_token", token, options)
